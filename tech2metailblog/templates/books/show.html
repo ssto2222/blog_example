@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+<h2>{{ book.title }}</h2>
+<br>
+
+{{ book.author }}
+
+<br><br>
+
+作成日時: {{ book.created_at.strftime('%Y-%m-%d') }}
+<br><br>
+{% if session.logged_in %}
+<div class="btn-group">
+    <form action="{{ url_for('books.edit_books', id=book.id ) }}" method="GET">
+        <button type="submit" class="btn btn-secondary">編集</button>
+    </form>
+</div>
+<div class="btn-group">
+    <form action="{{ url_for('books.delete_books', id=book.id ) }}" method="POST">
+        <button type="submit" class="btn btn-danger">削除</button>
+    </form>
+</div>
+    
+{% endif %}
+
+</div>
+
+{% endblock %}

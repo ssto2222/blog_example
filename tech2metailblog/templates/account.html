@@ -1,0 +1,41 @@
+{%extends 'base.html'%}
+{%block content%}
+<body class="d-flex h-100 text-center text-white bg-dark">
+  
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    
+        <main class="px-3">
+        <div align="center">
+            <h1>Welcome to the page for {{current_user.username}}.</h1>
+            <img align="center" src="{{url_for('static',filename='profile_pics/' + current_user.profile_image)}}">
+        </div>
+        <div class="container">
+            <form  method="POST" action="" enctype="multipart/form-data">
+               
+                {{form.hidden_tag()}}
+                <div class="form-group">
+                    {{form.username.label(class="form-group")}}
+                    {{form.username(class="form-control")}}<br>
+                </div>
+
+                <div class="form-group">
+                    {{form.email.label(class="form-group")}}
+                    {{form.email(class="form-control")}}<br>
+                </div>
+
+                <div class="form-group">
+                    {{form.picture.label(class="form-group")}}
+                    {{form.picture(class="form-control")}}
+                </div>
+                <br>
+                <div class="form-group">
+                    {{form.submit(class="w-100 btn btn-lg btn-primary")}}
+                </div>
+            </form>
+        </div>
+
+        </main>
+    </div>
+</body>
+
+{%endblock%}

@@ -1,0 +1,43 @@
+{%extends "base.html" %}
+{%block content%}
+    <div class="container ">
+        <div class="form-signin">
+            <h1 class="h3 mb-3 fw-normal">Welcome to the contact page. Please contact me!</h1>
+            <form  action="{{url_for('contacts.contact')}}" method="POST">
+                {{form.hidden_tag()}}
+                {{form.username.label(class="")}}{{form.username(class="form-control")}}<br>
+                {{form.email.label(class="")}}{{form.email(class="form-control")}}<br>
+                {{form.title.label(class="")}}{{form.title(class="form-control")}}<br>
+                {{form.text.label(class="")}}{{form.text(class="form-control")}}<br>
+            
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#send-modal">
+                送信
+            </button>
+            <!--modal to delete post-->
+            <div class="modal fade" tabindex="-1" id="send-modal" aria-labelledby="send-modalLabel">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="send-modalLabel">注意！</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        <p>メールを送信しますか？</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                            
+                           
+                            <form  action="{{url_for('contacts.contact')}}" method="POST">
+                                <input type="submit" class="btn btn-danger" value="送信">
+                            </form>
+                        </div>
+                </div>
+                </div>
+             </div>
+            </form>
+            
+    
+        </div>
+    </div>
+{%endblock%}

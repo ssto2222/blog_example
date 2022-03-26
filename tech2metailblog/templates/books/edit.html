@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+<form action="{{ url_for('books.update_books', id=book.id) }}" class="add-books" method="POST">
+    <div class="form-group">
+        <label for="InputTitle" class="">タイトル</label>
+        <input type="text" class="form-control" id="InputTitle" name="title" value="{{ book.title}}">
+    </div>
+
+    <div class="form-group">
+        <label for="InputTitle" class="">著者</label>
+        <input type="text" class="form-control" id="InputTitle" name="author" value="{{ book.author}}">
+    </div>
+
+    <div class="form-group">
+        <label for="InputTitle" class="">出版者</label>
+        <input type="text" class="form-control" id="InputTitle" name="published_by" value="{{ book.published_by}}">
+    </div>
+    
+    <div class="form-group">
+        <label for="InputTitle" class="">出版年</label>
+        <input type="text" class="form-control" id="InputTitle" name="published_at" value="{{ book.published_at }}">
+    </div>
+
+    <div class="form-group">
+        <label for="InputTitle" class="">イメージリンク</label>
+        <input type="text" class="form-control" id="InputTitle" name="img_link" value="{{ book.img_link}}">
+    </div>
+
+    <div class="form-group">
+        <label for="InputTitle" class="">ECサイトリンク</label>
+        <input type="text" class="form-control" id="InputTitle" name="pur_link" value="{{ book.pur_link}}">
+    </div>
+
+        <button type="submit" class="btn btn-primary">更新</button>
+</form>
+</div>
+
+
+{% endblock %}

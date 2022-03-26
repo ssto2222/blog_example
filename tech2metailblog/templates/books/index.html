@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+{% if session.logged_in %}
+<div class="btn-group">
+  <form action="{{ url_for('books.new_book') }}" method="GET">
+      <button type="submit" class="btn btn-primary">新規登録</button>
+  </form>
+</div>
+{% endif %}
+<div class="table-responsive">
+<table class="table table-bordered">  
+  <thead>
+      <tr>
+          <th colspan="1" class="text-center">No.</th>
+          <th colspan="1" class="text-center">タイトル</th>
+          <th colspan="1" class="text-center">著者</th>
+          <th colspan="1" class="text-center">出版者</th>
+          <th colspan="1" class="text-center">出版年</th>
+          <th colspan="1" class="text-center">img_link</th>
+          <th colspan="1" class="text-center">ecsite_link</th>
+          <th colspan="1" class="text-center">編集</th>
+          <th colspan="1" class="text-center">削除</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+      <tr class="text-center"> 
+          <td>{{book.id}}</td>
+          <td>{{book.title}}</td>
+          <td>{{book.author}}</td>
+          <td>{{book.published_by}}</td>
+          <td>{{book.published_at}}</td>
+          <td>{{book.img_link}}</td>
+          <td>{{book.pur_link}}</td>
+          <td>
+            <div class="btn-group">
+              <form action="{{ url_for('books.edit_books',id=book.id) }}" method="GET">
+                <button type="submit" class="btn btn-primary">編集</button>
+              </form>
+            </div>
+          </td>
+          <td>
+            <div class="btn-group">
+              <form action="{{ url_for('books.delete_books',id=book.id) }}" method="POST">
+                <button type="submit" class="btn btn-danger">削除</button>
+              </form>
+            </div>
+          </td>   
+      </tr>
+      {% endfor %}
+  </tbody>
+</table>
+</div>
+
+ 
+    {% if books | length == 0 %}
+     <body > 
+       本がありません
+     </body>
+    {% endif %}
+
+{% endblock %}

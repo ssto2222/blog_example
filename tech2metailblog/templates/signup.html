@@ -1,0 +1,17 @@
+{%extends "base.html" %}
+{%block content%}
+    <div class="container text-center">
+        <div class="form-signin text-center">
+            <h1 class="h3 mb-3 fw-normal">Welcome to the sign up page. Please sign up!</h1>
+            <form action="{{url_for('users.signup')}}" method="POST">
+                {{form.hidden_tag()}}
+                {{form.email.label(class="")}}{{form.email(class="form-control")}}<br>
+                {{form.username.label(class="")}}{{form.username(class="form-control")}}<br>
+                {{form.password.label(class="")}}{{form.password(class="form-control")}}<br>
+                {{form.pass_confirm.label(class="")}}{{form.pass_confirm(class="form-control")}}<br>
+                <button class="w-100 btn btn-lg btn-primary" type="submit">Sign up</button>
+            </form>
+    
+        </div>
+    </div>
+{%endblock%}
