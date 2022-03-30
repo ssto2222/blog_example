@@ -10,6 +10,7 @@ import pandas as pd
 
 books = Blueprint('books', __name__)
 
+'''
 basedir = os.getcwd()
 print(basedir)
 l = basedir.split('/')
@@ -21,7 +22,8 @@ basedir = os.path.join("/",l_new)
 dir = os.path.join(basedir,'secrets')
 json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
-admin_user = json.load(open_json)['username']
+'''
+admin_user = os.getenv('ADMIN_USER_NAME', 'Optional default value')
 
 
 @books.route('/bookshelf')
