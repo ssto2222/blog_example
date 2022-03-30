@@ -58,6 +58,6 @@ sqlparse
 stripe
 tornado
 urllib3
-Werkzeug
+Werkzeug==2.0.3
 WTForms
 zipp
