@@ -6,7 +6,14 @@ import pandas as pd
 def create_df():
     
     basedir = os.getcwd()
-    dir=os.path.join(basedir,"tech2metailblog/secrets")
+    l = basedir.split('/')
+    del l[-4:]
+    print(l)
+    l_new = l[0]
+    for i in range(len(l)):
+        l_new = os.path.join(l_new,l[i])
+    basedir = l_new
+    dir = os.path.join('/',basedir,'secrets')
     # use creds to create a client to interact with the Google Drive API
     scope =['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
     json_file = os.path.join(dir,"client_secret_spread.json")

@@ -11,7 +11,14 @@ import pandas as pd
 books = Blueprint('books', __name__)
 
 basedir = os.getcwd()
-dir = os.path.join(basedir,'tech2metailblog','secrets')
+print(basedir)
+l = basedir.split('/')
+del l[-1]
+l_new = l[0]
+for i in range(len(l)):
+    l_new = os.path.join(l_new,l[i])
+basedir = os.path.join("/",l_new)
+dir = os.path.join(basedir,'secrets')
 json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 admin_user = json.load(open_json)['username']
