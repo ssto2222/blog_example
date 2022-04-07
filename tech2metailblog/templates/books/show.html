@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-<h2>{{ book.title }}</h2>
-<br>
+    <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
+        <h1>Book Title: {{ book.title }}</h1>
+        <h3>Author: {{ book.author }}</h3>
+    </div>
 
-{{ book.author }}
-
-<br><br>
 
 作成日時: {{ book.created_at.strftime('%Y-%m-%d') }}
 <br><br>
@@ -24,6 +23,61 @@
     
 {% endif %}
 
+</div>
+
+
+
+<!--Detail of this book-->
+<div class="container">
+    {% if current_user.username == admin_user %}
+    <div class="btn-group">
+        <form action="{{ url_for('bookspost.create_post', book_id=book.id ) }}" method="POST">
+            <button type="submit" class="btn btn-primary">詳細作成</button>
+        </form>
+    </div>
+    {% endif %}
+    {% if bookspost == None %}
+    <div class="">
+      <h2>作成中</h2>
+    </div>
+    {% else %}
+          <h3 class="display-4">{{bookspost.title}}</h3>
+    <div>
+        <p class="lead my-3">{{bookspost.text}}</p>
+
+        {% if current_user.username == admin_user %}
+           <button class="btn btn-secondary">
+               <a class="text-white" href="{{url_for('bookspost.update_post',book_id=book.id,bookspost_id=bookspost.id)}}">編集</a>
+           </button>
+
+           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#del-modal">
+              削除
+           </button>
+           <!--modal to delete post-->
+            <div class="modal fade" tabindex="-1" id="del-modal" aria-labelledby="del-modalLabel">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="del-modalLabel">注意！</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        <p>記事を削除しますが本当によろしいですか？</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        
+                            <form  action="{{url_for('bookspost.delete_post',book_id=book.id, bookspost_id=bookspost.id)}}" method="POST">
+                                <input type="submit" class="btn btn-danger" value="削除">
+                            </form>
+
+                        </div>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
 </div>
 
 {% endblock %}

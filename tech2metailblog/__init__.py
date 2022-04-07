@@ -52,5 +52,8 @@ app.register_blueprint(users)
 from tech2metailblog.books.views import books
 app.register_blueprint(books)
 
+from tech2metailblog.books.views import bookspost
+app.register_blueprint(bookspost)
+
 
 

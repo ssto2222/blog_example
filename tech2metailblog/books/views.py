@@ -1,8 +1,8 @@
 import os, json
-from flask import request, redirect, url_for, render_template, flash, session
+from flask import request, redirect, url_for, render_template, flash, session, abort
 from flask_login import  login_required, current_user
 from tech2metailblog import db
-from tech2metailblog.models import Books
+from tech2metailblog.models import Books, BooksPost
 from tech2metailblog.books.forms import BooksPostForm
 from flask import Blueprint
 from tech2metailblog.books.spread_sheet import create_df
@@ -10,6 +10,7 @@ import pandas as pd
 
 
 books = Blueprint('books', __name__)
+bookspost = Blueprint('bookspost', __name__)
 
 '''
 basedir = os.getcwd()
@@ -24,8 +25,8 @@ dir = os.path.join(basedir,'secrets')
 json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
-#admin_user = os.getenv('ADMIN_USER_NAME')
-admin_user = 'administrator'
+admin_user = os.getenv('ADMIN_USER_NAME')
+
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
@@ -63,12 +64,7 @@ def show_books():
         return render_template('error_pages/403.html')
         
     
-@books.route('/books/post', methods=['GET','POST'])
-@login_required
 
-def new_book():
-    form = BooksPostForm()
-    return render_template('books/new_post.html', form=form)
 
 @books.route('/books/new', methods=['GET','POST'])
 @login_required
@@ -92,28 +88,18 @@ def add_books():
             return redirect(url_for('books.show_books'))
         return render_template('books/new.html',form=form)
 
-@books.route('/books/<int:id>', methods=['GET'])
-def show_book(id):
-    book = Books.query.get(id)
-    return render_template('books/show.html', book=book)
+@books.route('/books/book_id=<int:book_id>', methods=['GET'])
+def show_book(book_id):
+    bookspost = BooksPost.query.get(book_id)
+    book = Books.query.get_or_404(book_id)
+    return render_template('books/show.html', book=book, bookspost=bookspost,admin_user=admin_user)
 
 @books.route('/books/<int:id>/edit', methods=['GET'])
 @login_required
 def edit_books(id):
     book = Books.query.get(id)
     return render_template('books/edit.html', book=book)
-
-@books.route('/books/<int:id>/post', methods=['GET','POST'])
-@login_required
-def post_books(id):
-    user = current_user
-    form = BooksPostForm()
-    book = Books.query.get(id)
-    if request.method == 'POST':
-        return render_template('books/post.html', book=book, user=user)
-    
-    return render_template('create_post.html',form=form)
-   
+ 
 
 @books.route('/books/<int:id>/update', methods=['POST'])
 @login_required
@@ -140,3 +126,62 @@ def delete_books(id):
     db.session.commit()
     flash('タイトル : {} の記事を削除しました'.format(books.title))
     return redirect(url_for('books.show_books'))
+
+################################################
+#### Books details 
+#################################
+
+@bookspost.route('/books/<int:book_id>/create_post',methods=['GET','POST'])
+@login_required
+def create_post(book_id):
+    if current_user.username == admin_user:
+        form = BooksPostForm()
+        book = Books().query.get_or_404(book_id)
+        if request.method == 'POST': 
+            bookspost = BooksPost(
+                book_id=book.id,
+                user_id=current_user.id,
+                title=form.title.data,
+                text=form.text.data
+            )
+            
+            db.session.add(bookspost)
+            db.session.commit()
+            flash('本詳細説明が作成されました。')
+            return redirect(url_for('books.show_book',id=book.id))
+        
+        return render_template('books/create_post.html',form=form, book=book)
+
+@bookspost.route('/books/book_id=<int:book_id>/<int:bookspost_id>/update', methods=['GET','POST'])
+@login_required
+
+def update_post(book_id,bookspost_id):
+     if current_user.username == admin_user:
+        form = BooksPostForm()
+        bookspost = BooksPost.query.get_or_404(bookspost_id)
+        book= Books.query.get(book_id)
+        if request.method == 'POST':
+            bookspost.title = form.title.data
+            bookspost.text = form.text.data
+
+            db.session.commit()
+            flash('本への投稿完了')
+
+        form.title.data = bookspost.title
+        form.text.data = bookspost.text
+
+        return render_template('books/books_post.html', form=form, book_id=book.id,bookspost_id=bookspost.id)
+
+
+#delete
+@bookspost.route('/books/book_id=<int:book_id>/<int:bookspost_id>/delete',methods=['GET', 'POST'])
+@login_required
+def delete_post(book_id, bookspost_id):
+    bookspost = BooksPost.query.get_or_404(bookspost_id)
+    if current_user.username != admin_user:
+        abort(403)
+        
+    db.session.delete(bookspost)
+    db.session.commit()
+    flash('本詳細を削除しました。')
+    return redirect(url_for('books.show_shelf'))
