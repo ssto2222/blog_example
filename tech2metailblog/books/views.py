@@ -63,31 +63,34 @@ def show_books():
         return render_template('error_pages/403.html')
         
     
-@books.route('/books/new', methods=['GET','POST'])
+@books.route('/books/post', methods=['GET','POST'])
 @login_required
 
 def new_book():
     form = BooksPostForm()
-    return render_template('books/new.html', form=form)
+    return render_template('books/new_post.html', form=form)
 
-@books.route('/books', methods=['POST'])
+@books.route('/books/new', methods=['GET','POST'])
 @login_required
 
 def add_books():
-    books = Books(
-        title = request.form['title'],
-        author = request.form['author'],
-        published_by = request.form['published_by'],
-        published_at = request.form['published_at'],
-        img_link = request.form['img_link'],
-        pur_link = request.form['pur_link'],
-        text = request.form['text']  
-    )
-    
-    db.session.add(books)
-    db.session.commit()
-    flash('新しく記事が作成されました')
-    return redirect(url_for('books.show_books'))
+    if current_user.username == admin_user:
+        form = BooksPostForm
+        if form.validate_on_submit:
+            books = Books(
+                title = form.title.data,
+                author = form.author.data,
+                published_by = form.published_by.data,
+                published_at = form.published_at.data,
+                img_link = form.img_link.data,
+                pur_link = form.ecsite_link.data
+            )
+            
+            db.session.add(books)
+            db.session.commit()
+            flash('新しく本が登録されました')
+            return redirect(url_for('books.show_books'))
+        return render_template('books/new.html',form=form)
 
 @books.route('/books/<int:id>', methods=['GET'])
 def show_book(id):
