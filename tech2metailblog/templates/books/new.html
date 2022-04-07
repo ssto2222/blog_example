@@ -31,10 +31,57 @@
         <label for="InputTitle" class="">ECサイトリンク</label>
         <input type="text" class="form-control" id="InputTitle" name="pur_link">
     </div>
+
+    <div class="form-group">
+        <label for="InputTitle" class="">ECサイトリンク</label>
+        <textarea id="book" name="booktext" ></textarea>
+    </div>
     
         <button type="submit" class="btn btn-primary">作成</button>
 </form>
 </div>
 
+<div class="container">
+    <div class="form-signin">
+        <h1 class="h3 mb-3 fw-normal">Welcome to add a book page. Please post it!</h1>
+        <form class="form-group" method="POST">
+            {{form.hidden_tag()}}
+            <div class="form-group">
+                {{form.title.label(class="form-control-label")}}
+                {{form.title(class="form-control form-control-lg")}}
+            </div>
+            <div class="form-group">
+                {{form.author.label(class="form-control-label")}}
+                {{form.author(class="form-control form-control-lg")}}
+            </div>
+            <div class="form-group">
+                {{form.published_by.label(class="form-control-label")}}
+                {{form.published_by(class="form-control form-control-lg")}}
+            </div>
+            <div class="form-group">
+                {{form.published_at.label(class="form-control-label")}}
+                {{form.published_at(class="form-control form-control-lg")}}
+            </div>
+            <div class="form-group">
+                {{form.img_link.label(class="form-control-label")}}
+                {{form.img_link(class="form-control form-control-lg")}}
+            </div>
+            <div class="form-group">
+                {{form.ecsite_link.label(class="form-control-label")}}
+                {{form.ecsite_link(class="form-control form-control-lg")}}
+            </div>
+
+            <div class="form-group">
+                {{form.text.label(class="form-control-label")}}
+                {{form.text(class="form-control form-control-lg ")}}
+            </div>
+            <br>
+            <div class="form-group">
+                {{form.submit(class="btn btn-outline-info",method='POST')}}
+            </div>
+        </form>
+
+    </div>
+</div>
 
 {% endblock %}

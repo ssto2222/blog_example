@@ -18,6 +18,7 @@
           <th colspan="1" class="text-center">出版年</th>
           <th colspan="1" class="text-center">img_link</th>
           <th colspan="1" class="text-center">ecsite_link</th>
+          <th colspan="1" class="text-center">text</th>
           <th colspan="1" class="text-center">編集</th>
           <th colspan="1" class="text-center">削除</th>
       </tr>
@@ -32,6 +33,7 @@
           <td>{{book.published_at}}</td>
           <td>{{book.img_link}}</td>
           <td>{{book.pur_link}}</td>
+          <td>{{book.text}}</td>
           <td>
             <div class="btn-group">
               <form action="{{ url_for('books.edit_books',id=book.id) }}" method="GET">

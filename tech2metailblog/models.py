@@ -1,5 +1,6 @@
 #models.py
 from datetime import datetime
+from email.policy import default
 import pytz
 from tech2metailblog import db, login_manager
 from werkzeug.security import generate_password_hash,check_password_hash
@@ -19,6 +20,7 @@ class User(db.Model,UserMixin):
     password_hash = db.Column(db.String(128))
     
     posts = db.relationship('BlogPost',backref='author',lazy=True)
+    booksposts = db.relationship('BooksPost',backref='author',lazy=True)
     
     def __init__(self,email,username,password):
         self.email = email
@@ -62,18 +64,43 @@ class Books(db.Model):
     pur_link = db.Column(db.String(100))
     created_at = db.Column(db.DateTime)
     
+    booksposts = db.relationship('BooksPost',backref='book',lazy=True)
+    
     def __init__(self, title=None, author=None, 
-                 published_by=None, published_at=None, img_link=None, pur_link=None):
+                 published_by=None, published_at=None, img_link=None, pur_link=None,text="Now constructing"):
         self.title = title
         self.author = author
         self.published_by = published_by
         self.published_at = published_at
         self.img_link = img_link
         self.pur_link = pur_link
+        self.text = text
         self.created_at = datetime.now(pytz.timezone('Asia/Tokyo'))
         
     def __repr__(self):
         return '<Books id:{} title:{} author:{} published_by:{}>'.format(self.id, self.title, self.author, self.published_by)
+    
+class BooksPost(db.Model):
+    
+    users = db.relationship(User)
+    books = db.relationship(Books)
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer,db.ForeignKey('users.id'),nullable=False)
+    book_id = db.Column(db.Integer,db.ForeignKey('books.id'),nullable=False)
+    
+    date = db.Column(db.DateTime,nullable=False,default=datetime.now(pytz.timezone('Asia/Tokyo')))
+    title = db.Column(db.String(140),nullable=False)
+    text = db.Column(db.Text,nullable=False)
+    
+    def __init__(self,title,text,user_id,book_id):
+        self.title = title
+        self.text = text
+        self.user_id = user_id
+        self.book_id = book_id
+        
+    def __repr__(self):
+        return f"Post ID: {self.id} -- Date: {self.date} --- {self.title}"
     
     
 class Contact(db.Model):

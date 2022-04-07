@@ -3,6 +3,7 @@ from flask import request, redirect, url_for, render_template, flash, session
 from flask_login import  login_required, current_user
 from tech2metailblog import db
 from tech2metailblog.models import Books
+from tech2metailblog.books.forms import BooksPostForm
 from flask import Blueprint
 from tech2metailblog.books.spread_sheet import create_df
 import pandas as pd
@@ -23,8 +24,7 @@ dir = os.path.join(basedir,'secrets')
 json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
-admin_user = os.getenv('ADMIN_USER_NAME', 'Optional default value')
-
+admin_user = os.getenv('ADMIN_USER_NAME')
 
 @books.route('/bookshelf')
 def create_bookshelf():
@@ -63,11 +63,12 @@ def show_books():
         return render_template('error_pages/403.html')
         
     
-@books.route('/books/new', methods=['GET'])
+@books.route('/books/new', methods=['GET','POST'])
 @login_required
 
 def new_book():
-    return render_template('books/new.html')
+    form = BooksPostForm()
+    return render_template('books/new.html', form=form)
 
 @books.route('/books', methods=['POST'])
 @login_required
@@ -79,7 +80,8 @@ def add_books():
         published_by = request.form['published_by'],
         published_at = request.form['published_at'],
         img_link = request.form['img_link'],
-        pur_link = request.form['pur_link']  
+        pur_link = request.form['pur_link'],
+        text = request.form['text']  
     )
     
     db.session.add(books)
@@ -97,7 +99,17 @@ def show_book(id):
 def edit_books(id):
     book = Books.query.get(id)
     return render_template('books/edit.html', book=book)
+
+@books.route('/books/<int:id>/post', methods=['GET','POST'])
+@login_required
+def post_books(id):
+    user = current_user
+    form = BooksPostForm()
+    book = Books.query.get(id)
+    if request.method == 'POST':
+        return render_template('books/post.html', book=book, user=user)
     
+    return render_template('create_post.html',form=form)
    
 
 @books.route('/books/<int:id>/update', methods=['POST'])
