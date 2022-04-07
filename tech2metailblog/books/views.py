@@ -138,17 +138,18 @@ def create_post(book_id):
         form = BooksPostForm()
         book = Books().query.get_or_404(book_id)
         if request.method == 'POST': 
-            bookspost = BooksPost(
-                book_id=book.id,
-                user_id=current_user.id,
-                title=form.title.data,
-                text=form.text.data
-            )
-            
-            db.session.add(bookspost)
-            db.session.commit()
-            flash('本詳細説明が作成されました。')
-            return redirect(url_for('books.show_book',id=book.id))
+            if form.validate_on_submit: 
+                bookspost = BooksPost(
+                    book_id=book_id,
+                    user_id=current_user.id,
+                    title=form.title.data,
+                    text=form.text.data
+                )
+                
+                db.session.add(bookspost)
+                db.session.commit()
+                flash('本詳細説明が作成されました。')
+                return redirect(url_for('books.show_book',book_id=book.id))
         
         return render_template('books/create_post.html',form=form, book=book)
 
@@ -158,19 +159,20 @@ def create_post(book_id):
 def update_post(book_id,bookspost_id):
      if current_user.username == admin_user:
         form = BooksPostForm()
+        book = Books.query.get(book_id)
         bookspost = BooksPost.query.get_or_404(bookspost_id)
-        book= Books.query.get(book_id)
         if request.method == 'POST':
             bookspost.title = form.title.data
             bookspost.text = form.text.data
 
             db.session.commit()
-            flash('本への投稿完了')
+            flash('本詳細の更新完了')
+            return redirect(url_for('books.show_book',book_id=book.id))
 
         form.title.data = bookspost.title
         form.text.data = bookspost.text
 
-        return render_template('books/books_post.html', form=form, book_id=book.id,bookspost_id=bookspost.id)
+        return render_template('books/create_post.html', form=form, book=book,bookspost_id=bookspost.id)
 
 
 #delete
