@@ -24,8 +24,8 @@ dir = os.path.join(basedir,'secrets')
 json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
-admin_user = os.getenv('ADMIN_USER_NAME')
-
+#admin_user = os.getenv('ADMIN_USER_NAME')
+admin_user = 'administrator'
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
@@ -75,8 +75,8 @@ def new_book():
 
 def add_books():
     if current_user.username == admin_user:
-        form = BooksPostForm
-        if form.validate_on_submit:
+        form = BooksPostForm()
+        if request.method == 'POST':
             books = Books(
                 title = form.title.data,
                 author = form.author.data,
