@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="container">
     <div class="p-4 p-md-5 mb-4 text-white rounded bg-dark">
         <h1>Book Title: {{ book.title }}</h1>
         <h3>Author: {{ book.author }}</h3>
     </div>
+   
 
 
 作成日時: {{ book.created_at.strftime('%Y-%m-%d') }}
 <br><br>
-{% if session.logged_in %}
+{% if current_user.username == admin_user %}
 <div class="btn-group">
     <form action="{{ url_for('books.edit_books', id=book.id ) }}" method="GET">
         <button type="submit" class="btn btn-secondary">編集</button>
@@ -28,56 +30,71 @@
 
 
 <!--Detail of this book-->
-<div class="container">
-    {% if current_user.username == admin_user %}
-    <div class="btn-group">
-        <form action="{{ url_for('bookspost.create_post', book_id=book.id ) }}">
-            <button type="submit" class="btn btn-primary">詳細作成</button>
-        </form>
-    </div>
-    {% endif %}
-    {% if bookspost == None %}
-    <div class="">
-      <h2>作成中</h2>
+<div class="container" > 
+    {% if hoges.items %}
+    {% for post in hoges.items %}
+      <div class="card text-center">
+          <div class="card-body text-start">
+            <h2>{{post.title}}</h2>
+            <p class='text-muted'>Published on: {{post.date.strftime("%Y-%m-%d")}}</p>
+            <br>
+            {{post.text}}
+          </div>
+          {% if current_user.username == admin_user %}
+          <button class="btn btn-secondary">
+              <a class="text-white" href="{{url_for('bookspost.update_post',bookspost_id=post.id, book_id = book.id)}}">編集</a>
+          </button>
+
+          <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#del-modal">
+              削除
+          </button>
+          <!--modal to delete post-->
+              <div class="modal fade" tabindex="-1" id="del-modal" aria-labelledby="del-modalLabel">
+                  <div class="modal-dialog">
+                  <div class="modal-content">
+                          <div class="modal-header">
+                          <h5 class="modal-title" id="del-modalLabel">注意！</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                          <p>記事を削除しますが本当によろしいですか？</p>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                          
+                              <form  action="{{url_for('bookspost.delete_post',bookspost_id=post.id,book_id=book.id)}}" method="POST">
+                                  <input type="submit" class="btn btn-danger" value="削除">
+                              </form>
+
+                          </div>
+                  </div>
+                  </div>
+              </div>
+      {% endif %}
+      </div>
+        {% endfor %}
+      
+    
+    <nav aria-label='Page Navigation example'>
+        <ul class="pagination justify-content-center">
+            {% for page_num in hoges.iter_pages(left_edge=1,right_edge=1,left_current=1,right_current=2) %}
+              {% if hoges.page == page_num %}
+                <li class="page-item disabled">
+                    <a href="{{url_for('books.show_book',page=page_num,book_id=book.id)}}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% else %}
+                <li class="page-item">
+                    <a href="{{url_for('books.show_book',page=page_num,book_id=book.id)}}" class="page-link">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
     </div>
     {% else %}
-          <h3 class="display-4">{{bookspost.title}}</h3>
-    <div>
-        <p class="lead my-3">{{bookspost.text}}</p>
-
-        {% if current_user.username == admin_user %}
-           <button class="btn btn-secondary">
-               <a class="text-white" href="{{url_for('bookspost.update_post',book_id=book.id,bookspost_id=bookspost.id)}}">編集</a>
-           </button>
-
-           <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#del-modal">
-              削除
-           </button>
-           <!--modal to delete post-->
-            <div class="modal fade" tabindex="-1" id="del-modal" aria-labelledby="del-modalLabel">
-                <div class="modal-dialog">
-                <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="del-modalLabel">注意！</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                        <p>記事を削除しますが本当によろしいですか？</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                        
-                            <form  action="{{url_for('bookspost.delete_post',book_id=book.id, bookspost_id=bookspost.id)}}" method="POST">
-                                <input type="submit" class="btn btn-danger" value="削除">
-                            </form>
-
-                        </div>
-                </div>
-                </div>
-            </div>
-        {% endif %}
+    <div class="text-center">
+    <h3>投稿記事がありません。</h3>
     </div>
-{% endif %}
-</div>
+    {% endif %}
 
 {% endblock %}

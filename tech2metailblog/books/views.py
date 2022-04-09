@@ -26,7 +26,7 @@ json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
 admin_user = os.getenv('ADMIN_USER_NAME')
-
+admin_user = 'administrator'
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
@@ -88,11 +88,6 @@ def add_books():
             return redirect(url_for('books.show_books'))
         return render_template('books/new.html',form=form)
 
-@books.route('/books/book_id=<int:book_id>', methods=['GET'])
-def show_book(book_id):
-    bookspost = BooksPost.query.get(book_id)
-    book = Books.query.get_or_404(book_id)
-    return render_template('books/show.html', book=book, bookspost=bookspost,admin_user=admin_user)
 
 @books.route('/books/<int:id>/edit', methods=['GET'])
 @login_required
@@ -127,6 +122,14 @@ def delete_books(id):
     flash('タイトル : {} の記事を削除しました'.format(books.title))
     return redirect(url_for('books.show_books'))
 
+@books.route('/books/<int:book_id>', methods=['GET'])
+def show_book(book_id):
+    page = request.args.get('page',1,type=int)
+    book = Books.query.get(book_id)
+    hoges = BooksPost.query.filter_by(book_id=book_id).order_by(BooksPost.date.desc()).paginate(page=page,per_page=5)
+    print(hoges)
+    return render_template('books/show.html', book=book, hoges=hoges,admin_user=admin_user,page=page)
+
 ################################################
 #### Books details 
 #################################
@@ -136,7 +139,6 @@ def delete_books(id):
 def create_post(book_id):
     if current_user.username == admin_user:
         form = BooksPostForm()
-        book = Books().query.get_or_404(book_id)
         if request.method == 'POST': 
             if form.validate_on_submit: 
                 bookspost = BooksPost(
@@ -149,41 +151,42 @@ def create_post(book_id):
                 db.session.add(bookspost)
                 db.session.commit()
                 flash('本詳細説明が作成されました。')
-                return redirect(url_for('books.show_book',book_id=book.id))
-        
+                return redirect(url_for('books.show_book',book_id=book_id))
+        book = Books.query.get(book_id)
         return render_template('books/create_post.html',form=form, book=book)
 
-@bookspost.route('/books/book_id=<int:book_id>/<int:bookspost_id>/update', methods=['GET','POST'])
+@bookspost.route('/books/<int:book_id>/<int:bookspost_id>/update', methods=['GET','POST'])
 @login_required
 
 def update_post(book_id,bookspost_id):
      if current_user.username == admin_user:
         form = BooksPostForm()
-        book = Books.query.get(book_id)
-        bookspost = BooksPost.query.get_or_404(bookspost_id)
+        bookspost = BooksPost.query.get(bookspost_id)
+        book = BooksPost.query.filter_by(bookspost_id=bookspost_id).first()
         if request.method == 'POST':
             bookspost.title = form.title.data
             bookspost.text = form.text.data
 
             db.session.commit()
             flash('本詳細の更新完了')
-            return redirect(url_for('books.show_book',book_id=book.id))
+            return redirect(url_for('books.show_book'))
 
         form.title.data = bookspost.title
         form.text.data = bookspost.text
 
-        return render_template('books/create_post.html', form=form, book=book,bookspost_id=bookspost.id)
+        return render_template('books/create_post.html', form=form, book=book,book_id=book_id,bookspost_id=bookspost.id)
 
 
 #delete
-@bookspost.route('/books/book_id=<int:book_id>/<int:bookspost_id>/delete',methods=['GET', 'POST'])
+@bookspost.route('/books/<int:book_id>/<int:bookspost_id>/delete',methods=['GET', 'POST'])
 @login_required
 def delete_post(book_id, bookspost_id):
     bookspost = BooksPost.query.get_or_404(bookspost_id)
+    book = Books.query.get_or_404(book_id)
     if current_user.username != admin_user:
         abort(403)
         
     db.session.delete(bookspost)
     db.session.commit()
     flash('本詳細を削除しました。')
-    return redirect(url_for('books.show_shelf'))
+    return redirect(url_for('books.show_book',book_id=book.id))

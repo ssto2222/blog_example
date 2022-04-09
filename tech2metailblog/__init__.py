@@ -17,7 +17,7 @@ app.config['WTF_CSRF_SECRET_KEY']="a csrf secret key"
 ############################################
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir,'data.sqlite')
-app.config['SQLALCHEMY_TRACK_MODIFICATION'] = False
+app.config['SQLALCHEMY_TRACK_MODIFICATION'] = True
 
 db = SQLAlchemy(app)
 Migrate(app,db)

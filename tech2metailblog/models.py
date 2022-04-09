@@ -20,7 +20,7 @@ class User(db.Model,UserMixin):
     password_hash = db.Column(db.String(128))
     
     posts = db.relationship('BlogPost',backref='author',lazy=True)
-    booksposts = db.relationship('BooksPost',backref='author',lazy=True)
+    booksposts = db.relationship('BooksPost',backref='user',lazy=True)
     
     def __init__(self,email,username,password):
         self.email = email
@@ -100,7 +100,7 @@ class BooksPost(db.Model):
         self.book_id = book_id
         
     def __repr__(self):
-        return f"Post ID: {self.id} -- Date: {self.date} --- {self.title}"
+        return f"Post ID: {self.id} -- Date: {self.date} --- title: {self.title} ---text:{self.text} --- book_id:{self.book_id}"
     
     
 class Contact(db.Model):
