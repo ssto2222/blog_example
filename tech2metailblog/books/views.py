@@ -26,6 +26,7 @@ json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
 admin_user = os.getenv('ADMIN_USER_NAME')
+#admin_user = 'administrator'
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
@@ -161,14 +162,14 @@ def update_post(book_id,bookspost_id):
      if current_user.username == admin_user:
         form = BooksPostForm()
         bookspost = BooksPost.query.get(bookspost_id)
-        book = BooksPost.query.filter_by(bookspost_id=bookspost_id).first()
+        book = BooksPost.query.filter_by(book_id=book_id).first()
         if request.method == 'POST':
             bookspost.title = form.title.data
             bookspost.text = form.text.data
 
             db.session.commit()
             flash('本詳細の更新完了')
-            return redirect(url_for('books.show_book'))
+            return redirect(url_for('books.show_book',book_id=book_id))
 
         form.title.data = bookspost.title
         form.text.data = bookspost.text
