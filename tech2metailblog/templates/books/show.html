@@ -31,6 +31,11 @@
 
 <!--Detail of this book-->
 <div class="container" > 
+    {% if current_user.username == admin_user %}
+          <button class="btn btn-secondary">
+            <a class="text-white" href="{{url_for('bookspost.create_post',book_id = book.id)}}">投稿</a>
+          </button>
+    {% endif %}
     {% if hoges.items %}
     {% for post in hoges.items %}
       <div class="card text-center">
@@ -41,6 +46,7 @@
             {{post.text}}
           </div>
           {% if current_user.username == admin_user %}
+        
           <button class="btn btn-secondary">
               <a class="text-white" href="{{url_for('bookspost.update_post',bookspost_id=post.id, book_id = book.id)}}">編集</a>
           </button>

@@ -26,7 +26,6 @@ json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
 admin_user = os.getenv('ADMIN_USER_NAME')
-admin_user = 'administrator'
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
