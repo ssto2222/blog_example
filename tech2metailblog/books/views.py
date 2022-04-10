@@ -126,7 +126,7 @@ def delete_books(id):
 def show_book(book_id):
     page = request.args.get('page',1,type=int)
     book = Books.query.get(book_id)
-    hoges = BooksPost.query.filter_by(book_id=book_id).order_by(BooksPost.date.desc()).paginate(page=page,per_page=5)
+    hoges = BooksPost.query.filter_by(book_id=book_id).order_by(BooksPost.date.asc()).paginate(page=page,per_page=5)
     print(hoges)
     return render_template('books/show.html', book=book, hoges=hoges,admin_user=admin_user,page=page)
 
