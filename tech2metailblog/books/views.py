@@ -26,7 +26,7 @@ json_file = os.path.join(dir,"admin.json")
 open_json = open(json_file,'r')
 '''
 admin_user = os.getenv('ADMIN_USER_NAME')
-#admin_user = 'administrator'
+# admin_user = 'administrator'
 @books.route('/bookshelf')
 def create_bookshelf():
     df=create_df()
@@ -127,12 +127,22 @@ def show_book(book_id):
     page = request.args.get('page',1,type=int)
     book = Books.query.get(book_id)
     hoges = BooksPost.query.filter_by(book_id=book_id).order_by(BooksPost.date.asc()).paginate(page=page,per_page=5)
+
     print(hoges)
     return render_template('books/show.html', book=book, hoges=hoges,admin_user=admin_user,page=page)
 
 ################################################
 #### Books details 
 #################################
+
+
+@bookspost.route('/books/<int:book_id>/<int:bookspost_id>', methods=['GET'])
+def count_bookspost(book_id,bookspost_id):
+    book = Books.query.get(book_id)
+    bookspost = BooksPost.query.get(bookspost_id)
+    bookspost.count += 1
+    db.session.commit()
+    return redirect(url_for('books.show_book',book_id=book.id,count=bookspost.count))
 
 @bookspost.route('/books/<int:book_id>/create_post',methods=['GET','POST'])
 @login_required
@@ -145,7 +155,8 @@ def create_post(book_id):
                     book_id=book_id,
                     user_id=current_user.id,
                     title=form.title.data,
-                    text=form.text.data
+                    text=form.text.data,
+                    count=0
                 )
                 
                 db.session.add(bookspost)

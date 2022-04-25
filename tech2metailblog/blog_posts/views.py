@@ -17,7 +17,8 @@ def create_post():
             blog_post= BlogPost(
                 user_id=current_user.id,
                 title=form.title.data,
-                text=form.text.data
+                text=form.text.data,
+            
             )
             
             db.session.add(blog_post)

@@ -13,8 +13,8 @@
        
           <div class="container col-md-8 text-start">
             <h6>{{book.title}}</h6>
-            <p>.....</p>
-            <a href="{{url_for('books.show_book',book_id=book.id)}}" class="btn btn-primary">詳細はこちら</a>
+            <p><a href="{{book.pur_link}}" class="btn btn-secondary">外部商品サイトはこちら</a></p>
+            <a href="{{url_for('books.show_book',book_id=book.id)}}" class="btn btn-primary">本紹介はこちら</a>
           </div>
         </div>
         
@@ -30,8 +30,8 @@
      
         <div class="container col-md-8 text-start">
           <h6>{{book.title}}</h6>
-          <p>.....</p>
-            <a href="{{url_for('books.show_book',book_id=book.id)}}" class="btn btn-primary">詳細はこちら</a>
+          <p><a href="{{book.pur_link}}" class="btn btn-secondary">外部商品サイトはこちら</a></p>
+            <a href="{{url_for('books.show_book',book_id=book.id)}}" class="btn btn-primary">本紹介はこちら</a>
         </div>
       </div>
       
@@ -42,34 +42,4 @@
 </div>
 </div>
   
-
-
-
-
-
-   <div class="container row">
-  
-        <div class="container col-md-6" style="width: 800px;">
-          <div class="card  col-md-8" >
-            <div class="row g-0">
-                <div class="col-md-4">
-                  
-                </div>
-                <div class="col-md-3">
-                    <div class="card-body text-center px-2 py-3">
-                        <div class="card-title">
-                        
-                           
-                        </div>
-                        <p class="card-content">With supporting text below as a natural lead-in to additional content.</p>
-                          
-                       
-                    </div>
-                </div>
-            </div>
-          </div>
-     
-   
-      
-    
-  {% endblock %}
+{% endblock %}

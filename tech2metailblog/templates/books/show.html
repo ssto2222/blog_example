@@ -43,8 +43,19 @@
             <h2>{{post.title}}</h2>
             <p class='text-muted'>Published on: {{post.date.strftime("%Y-%m-%d")}}</p>
             <br>
+            <div class="button-group">
+                <form action="{{ url_for('bookspost.count_bookspost',book_id=book.id,bookspost_id=post.id)}}" method="GET">
+                     <button type="submit" class="btn btn-primary">
+                         いいね！
+                         <span class="badge bg-secondary">{{post.count}}</span>
+                         <span class="visually-hidden">unread messages</span>
+                     </button>
+                 </form>
+             </div>
+             <br>
             {{post.text}}
           </div>
+          
           {% if current_user.username == admin_user %}
         
           <button class="btn btn-secondary">

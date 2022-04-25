@@ -92,15 +92,17 @@ class BooksPost(db.Model):
     date = db.Column(db.DateTime,nullable=False,default=datetime.now(pytz.timezone('Asia/Tokyo')))
     title = db.Column(db.String(140),nullable=False)
     text = db.Column(db.Text,nullable=False)
+    count = db.Column(db.Integer,nullable = False)
     
-    def __init__(self,title,text,user_id,book_id):
+    def __init__(self,title,text,user_id,book_id,count=0):
         self.title = title
         self.text = text
         self.user_id = user_id
         self.book_id = book_id
+        self.count = count
         
     def __repr__(self):
-        return f"Post ID: {self.id} -- Date: {self.date} --- title: {self.title} ---text:{self.text} --- book_id:{self.book_id}"
+        return f"Post ID: {self.id} -- Date: {self.date} --- title: {self.title} ---text:{self.text} --- book_id:{self.book_id} --- count:{self.count}"
     
     
 class Contact(db.Model):
